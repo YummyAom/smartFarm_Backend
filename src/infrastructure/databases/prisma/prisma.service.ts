@@ -1,5 +1,5 @@
 // src/frameworks/database/prisma.service.ts
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient } from '@prisma/client';
 
 export class PrismaService extends PrismaClient {
   async connectDB() {

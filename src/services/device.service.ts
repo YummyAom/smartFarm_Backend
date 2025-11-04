@@ -1,4 +1,4 @@
-import { PrismaService } from "../infrastructure/databases/pisma/prisma.service";
+import { PrismaService } from "../infrastructure/databases/prisma/prisma.service";
 import { MqttService } from "./mqtt.service";
 import { EMQXClient } from "../infrastructure/mqtt/mqttClient";
 export class DeviceService {
@@ -34,11 +34,13 @@ export class DeviceService {
 
     async broadcastAllDevice() {
         const devices = await this.getDevices();
-        const configPayload = devices.map(device => ({
+        
+        const configPayload = devices.map((device: { id: string; name: string; isActive: boolean }) => ({
             id: device.id,
             name: device.name,
             state: device.isActive
         }));
+        
         await this.mqtt.publishDeviceAllState(configPayload);
     }
 }

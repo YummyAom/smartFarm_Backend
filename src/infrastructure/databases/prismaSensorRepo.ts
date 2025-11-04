@@ -1,4 +1,4 @@
-import prisma from "./pisma/prisma";
+import prisma from "./prisma/prisma";
 import { SensorRepository } from "../../domain/sensorRepository";
 import { Sensor, SensorConfig } from "../../domain/sensor";
 import { promises } from "dns";
@@ -23,7 +23,7 @@ export class PrismaSensorRepository implements SensorRepository {
     async updateTarget(data: SensorConfig): Promise<SensorConfig> {
         return await prisma.sensor.update({
             where: { id: data.id },
-            data: { target: data.target },
+            data: { target: data.target ?? undefined },
             select: {
                 id: true,
                 name: true,
@@ -32,10 +32,11 @@ export class PrismaSensorRepository implements SensorRepository {
         });
     }
 
-    async updateSensor(data: { id: string, name: string, target?: number | null }) {
+
+    async updateSensor(data: { id: string, name: string, target?: number | undefined }) {
         const updateData: any = {};
         if (data.name !== undefined) updateData.name = data.name;
-        if (data.target !== undefined) updateData.target = data.target;
+        if (data.target !== undefined) updateData.target = data.target ?? undefined;
 
         return await prisma.sensor.update({
             where: { id: data.id },

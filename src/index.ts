@@ -1,5 +1,5 @@
 import express from "express";
-import { PrismaService } from "./infrastructure/databases/pisma/prisma.service";
+import { PrismaService } from "./infrastructure/databases/prisma/prisma.service";
 import { config } from "./infrastructure/env/config";
 import createApp from "./app";
 import { EMQXClient } from "./infrastructure/mqtt/mqttClient";
