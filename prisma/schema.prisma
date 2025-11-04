@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Sensor {
+  id           String          @id @default(cuid())
+  name         String          @unique
+  unit         String          @default("unknown")
+  thresholdMin Float           @default(0)
+  thresholdMax Float           @default(0)
+  target       Float           @default(0)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  readings     SensorReading[]
+  // configs      UserConfig[]
+}
+
+model SensorReading {
+  id        String   @id @default(cuid())
+  sensorId  String
+  value     Float
+  timestamp DateTime @default(now())
+  sensor    Sensor   @relation(fields: [sensorId], references: [id])
+}
+
+model Actuator {
+  id        String     @id @default(cuid())
+  name      String
+  isActive  Boolean    @default(false)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  pidConfig PIDConfig? // ⭐ ความสัมพันธ์แบบ 1:1 (บาง actuator มี PID)
+}
+
+model PIDConfig {
+  id         String   @id @default(cuid())
+  actuatorId String   @unique // actuator หนึ่งมี PIDConfig เดียว
+  kp         Float
+  ki         Float
+  kd         Float
+  setpoint   Float
+  outputMin  Float? // optional เช่น จำกัด duty cycle
+  outputMax  Float? // optional
+  updatedAt  DateTime @updatedAt
+  actuator   Actuator @relation(fields: [actuatorId], references: [id])
+}
+
+// model UserConfig {
+//   id        String   @id @default(cuid())
+//   sensorId  String
+//   target    Float
+//   userNote  String?
+//   updatedAt DateTime @updatedAt
+//   sensor    Sensor   @relation(fields: [sensorId], references: [id])
+// }
